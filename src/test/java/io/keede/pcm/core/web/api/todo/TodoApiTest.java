@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -244,5 +245,34 @@ class TodoApiTest extends ApiTestSupport {
 
         assertThat(stored.get("created_at")).asString().matches(STORED_DATE_TIME_PATTERN);
         assertThat(stored.get("updated_at")).asString().matches(STORED_DATE_TIME_PATTERN);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 경로는 404, 지원하지 않는 메서드는 405를 공통 에러 형식으로 응답한다")
+    void unknownPathAndMethod() throws Exception {
+        String token = signupAndLogin();
+
+        mockMvc.perform(get("/unknown-path")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(token)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("RESOURCE_NOT_FOUND"));
+
+        mockMvc.perform(patch("/todos")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(token)))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"));
+    }
+
+    @Test
+    @DisplayName("그 외 Spring MVC 예외는 원래의 HTTP 상태를 유지하여 공통 에러 형식으로 응답한다")
+    void unsupportedMediaType() throws Exception {
+        String token = signupAndLogin();
+
+        mockMvc.perform(post("/todos")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(token))
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("장보기"))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(jsonPath("$.code").value("UNSUPPORTED_MEDIA_TYPE"));
     }
 }

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -46,13 +47,26 @@ class UserCommandServiceTest {
     void signup() {
         given(userRepository.existsByEmail("keede@pcm.io")).willReturn(false);
         given(passwordEncoder.encode("password123")).willReturn("encoded-password");
-        given(userRepository.save(any(User.class))).willAnswer(invocation -> invocation.getArgument(0));
+        given(userRepository.saveAndFlush(any(User.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         UserResponse response = userCommandService.signup("keede@pcm.io", "password123", "keede");
 
         assertThat(response.email()).isEqualTo("keede@pcm.io");
         assertThat(response.name()).isEqualTo("keede");
-        verify(userRepository).save(any(User.class));
+        verify(userRepository).saveAndFlush(any(User.class));
+    }
+
+    @Test
+    @DisplayName("동시 가입으로 이메일 유니크 제약을 위반하면 중복 이메일 예외로 변환한다")
+    void signupWithConcurrentDuplicateEmail() {
+        given(userRepository.existsByEmail("keede@pcm.io")).willReturn(false);
+        given(passwordEncoder.encode("password123")).willReturn("encoded-password");
+        given(userRepository.saveAndFlush(any(User.class))).willThrow(new DataIntegrityViolationException("duplicate"));
+
+        assertThatThrownBy(() -> userCommandService.signup("keede@pcm.io", "password123", "keede"))
+                .isInstanceOf(BusinessException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.DUPLICATE_EMAIL);
     }
 
     @Test
@@ -64,7 +78,7 @@ class UserCommandServiceTest {
                 .isInstanceOf(BusinessException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.DUPLICATE_EMAIL);
-        verify(userRepository, never()).save(any(User.class));
+        verify(userRepository, never()).saveAndFlush(any(User.class));
     }
 
     @Test

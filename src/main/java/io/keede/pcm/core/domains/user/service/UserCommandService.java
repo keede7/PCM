@@ -6,6 +6,7 @@ import io.keede.pcm.core.domains.user.entity.UserRepository;
 import io.keede.pcm.core.exception.BusinessException;
 import io.keede.pcm.core.exception.ErrorCode;
 import io.keede.pcm.core.web.dto.user.UserResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,12 @@ public class UserCommandService {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
         User user = User.create(email, passwordEncoder.encode(rawPassword), name);
-        return UserResponse.from(userRepository.save(user));
+        try {
+            return UserResponse.from(userRepository.saveAndFlush(user));
+        } catch (DataIntegrityViolationException e) {
+            // 동시 가입으로 사전 중복 검사를 통과한 경우, 유니크 제약 위반을 중복 이메일로 처리한다.
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
+        }
     }
 
     /**

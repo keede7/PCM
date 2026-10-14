@@ -38,7 +38,7 @@ public class TodoQueryService {
             final Long userId,
             final String keyword
     ) {
-        return todoRepository.findAllByUserIdAndTitleContainingOrderByIdAsc(userId, keyword).stream()
+        return todoRepository.findAllByUserIdAndTitleContainingOrderByIdAsc(userId, keyword.strip()).stream()
                 .map(TodoResponse::from)
                 .toList();
     }

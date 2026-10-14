@@ -67,12 +67,12 @@ class TodoQueryServiceTest {
     }
 
     @Test
-    @DisplayName("제목에 키워드가 포함된 내 TODO를 검색한다")
+    @DisplayName("앞뒤 공백을 제거한 키워드로 제목에 키워드가 포함된 내 TODO를 검색한다")
     void search() {
         List<Todo> todos = List.of(TodoFixture.builder().id(1L).title("장보기").build());
         given(todoRepository.findAllByUserIdAndTitleContainingOrderByIdAsc(1L, "장보")).willReturn(todos);
 
-        assertThat(todoQueryService.search(1L, "장보"))
+        assertThat(todoQueryService.search(1L, "  장보 "))
                 .extracting(TodoResponse::title)
                 .containsExactly("장보기");
     }

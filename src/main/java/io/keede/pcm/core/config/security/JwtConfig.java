@@ -20,8 +20,20 @@ public class JwtConfig {
 
     private final SecretKey secretKey;
 
+    private static final int MIN_SECRET_BYTES = 32;
+
     public JwtConfig(JwtProperties jwtProperties) {
-        this.secretKey = new SecretKeySpec(jwtProperties.secret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        this.secretKey = new SecretKeySpec(toSecretBytes(jwtProperties.secret()), "HmacSHA256");
+    }
+
+    /**
+     * HS256은 256bit 이상의 키가 필요하므로, 부족하면 로그인 시점이 아닌 기동 시점에 실패시킨다.
+     */
+    private static byte[] toSecretBytes(String secret) {
+        if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < MIN_SECRET_BYTES) {
+            throw new IllegalStateException("pcm.jwt.secret(JWT_SECRET)은 " + MIN_SECRET_BYTES + "바이트 이상이어야 합니다.");
+        }
+        return secret.getBytes(StandardCharsets.UTF_8);
     }
 
     @Bean
