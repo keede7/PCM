@@ -68,13 +68,14 @@ class TodoCommandServiceTest {
     }
 
     @Test
-    @DisplayName("본인의 TODO를 수정한다")
+    @DisplayName("본인의 TODO를 수정하고, 수정일시 반영을 위해 flush 후 응답한다")
     void update() {
         Todo todo = TodoFixture.builder().id(1L).build();
         given(todoRepository.findByIdAndUserId(1L, 1L)).willReturn(Optional.of(todo));
 
         TodoResponse response = todoCommandService.update(1L, 1L, "운동", "헬스장 가기", true);
 
+        verify(todoRepository).flush();
         assertThat(response.title()).isEqualTo("운동");
         assertThat(response.content()).isEqualTo("헬스장 가기");
         assertThat(response.completed()).isTrue();

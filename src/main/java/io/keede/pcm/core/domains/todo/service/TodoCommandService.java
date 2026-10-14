@@ -44,6 +44,8 @@ public class TodoCommandService {
     ) {
         Todo todo = findMyTodo(userId, todoId);
         todo.update(title, content, completed);
+        // @PreUpdate로 갱신되는 수정일시를 응답에 반영하기 위해 즉시 flush 한다.
+        todoRepository.flush();
         return TodoResponse.from(todo);
     }
 
