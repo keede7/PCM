@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -181,5 +182,19 @@ class UserApiTest extends ApiTestSupport {
 
         mockMvc.perform(delete("/users/me"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("사용자 응답의 생성일시는 yyyy-MM-dd HH:mm:ss 형식이다")
+    void dateTimeResponseFormat() throws Exception {
+        String email = uniqueEmail();
+
+        mockMvc.perform(post("/users/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"email": "%s", "password": "%s", "name": "keede"}
+                                """.formatted(email, PASSWORD)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.createdAt").value(matchesPattern(DATE_TIME_PATTERN)));
     }
 }

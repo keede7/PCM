@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class ApiTestSupport {
 
     protected static final String PASSWORD = "password123";
+    protected static final String DATE_TIME_PATTERN = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$";
 
     @Autowired
     protected MockMvc mockMvc;

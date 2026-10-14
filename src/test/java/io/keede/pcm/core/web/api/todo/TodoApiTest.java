@@ -2,12 +2,18 @@ package io.keede.pcm.core.web.api.todo;
 
 import com.jayway.jsonpath.JsonPath;
 import io.keede.pcm.core.web.api.ApiTestSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,6 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TodoApiTest extends ApiTestSupport {
 
     private static final long NOT_EXIST_TODO_ID = Long.MAX_VALUE;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     @DisplayName("[시나리오 2] TODO 생성 → 목록 조회 → 수정 → 삭제")
@@ -208,5 +217,31 @@ class TodoApiTest extends ApiTestSupport {
                                 {"title": "%s"}
                                 """.formatted(title)))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("TODO의 생성/수정일시는 yyyy-MM-dd HH:mm:ss 형식으로 응답되고 저장된다")
+    void dateTimeFormat() throws Exception {
+        String token = signupAndLogin();
+
+        String created = mockMvc.perform(post("/todos")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "장보기"}
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.createdAt").value(matchesPattern(DATE_TIME_PATTERN)))
+                .andExpect(jsonPath("$.updatedAt").value(matchesPattern(DATE_TIME_PATTERN)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        long todoId = ((Number) JsonPath.read(created, "$.id")).longValue();
+
+        Map<String, Object> stored = jdbcTemplate.queryForMap(
+                "SELECT created_at, updated_at FROM todos WHERE id = ?", todoId);
+
+        assertThat(stored.get("created_at")).asString().matches(DATE_TIME_PATTERN);
+        assertThat(stored.get("updated_at")).asString().matches(DATE_TIME_PATTERN);
     }
 }
