@@ -10,3 +10,7 @@ spring:
     driver-class-name: org.sqlite.JDBC
     username: pcm
     password: pcm
+pcm:
+  jwt:
+    secret: ${JWT_SECRET:pcm-local-development-jwt-secret-key-change-me}
+    expiration: 1h
