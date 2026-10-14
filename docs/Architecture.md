@@ -29,6 +29,7 @@ src/test/java/io/keede/pcm
 ├       └── Domain Name/     도메인의 이름으로 정의
 ├           └── fixture/     
 ├           └── service/     비즈니스 로직 정의
+├   └── config/              설정 단위 테스트
 ├   └── web/
 ├       └── api/             API 통합 테스트 (PRD 필수 시나리오)
 ```

@@ -22,7 +22,7 @@ Java 21이 필요합니다.
 
 - 기본 포트: `8080`
 - DB: 프로젝트 루트의 `pcm.db` (SQLite, 실행 시 테이블 자동 생성)
-- JWT 서명 키는 환경변수 `JWT_SECRET`(32바이트 이상)으로 지정합니다. 미지정 시 로컬 개발용 기본값이 사용됩니다.
+- JWT 서명 키는 환경변수 `JWT_SECRET`(32바이트 이상)으로 지정합니다. 미지정 시 로컬 개발용 기본값이 사용되며, 32바이트 미만이면 기동 시 실패합니다.
 
 ```bash
 JWT_SECRET=your-32-bytes-or-longer-secret-key-value ./gradlew bootRun
@@ -91,6 +91,7 @@ curl -X PUT localhost:8080/todos/1 -H "Authorization: Bearer <access_token>" \
 ### 응답 형식
 
 - 일시: `yyyy-MM-dd HH:mm:ss` (예: `2026-10-14 19:57:50`), 날짜: `yyyy-MM-dd`
+- DB 저장 시 일시는 `yyyy-MM-ddTHH:mm:ss` (ISO-8601) 형식의 문자열로 저장됩니다.
 
 ```json
 {
@@ -114,4 +115,9 @@ curl -X PUT localhost:8080/todos/1 -H "Authorization: Bearer <access_token>" \
 | 401 | `INVALID_CREDENTIALS` | 이메일 또는 비밀번호 불일치 |
 | 404 | `USER_NOT_FOUND` | 사용자 없음 (탈퇴한 사용자의 토큰 등) |
 | 404 | `TODO_NOT_FOUND` | 존재하지 않거나 본인 소유가 아닌 TODO |
+| 404 | `RESOURCE_NOT_FOUND` | 존재하지 않는 경로 |
+| 405 | `METHOD_NOT_ALLOWED` | 지원하지 않는 HTTP 메서드 |
 | 409 | `DUPLICATE_EMAIL` | 이미 가입된 이메일 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 |
+
+그 외 HTTP 상태를 가진 요청 오류(예: 415)는 `code`에 상태명(`UNSUPPORTED_MEDIA_TYPE` 등)을 담아 응답합니다.
