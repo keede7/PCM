@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TodoApiTest extends ApiTestSupport {
 
     private static final long NOT_EXIST_TODO_ID = Long.MAX_VALUE;
+    private static final String STORED_DATE_TIME_PATTERN = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -220,7 +221,7 @@ class TodoApiTest extends ApiTestSupport {
     }
 
     @Test
-    @DisplayName("TODO의 생성/수정일시는 yyyy-MM-dd HH:mm:ss 형식으로 응답되고 저장된다")
+    @DisplayName("TODO의 생성/수정일시는 yyyy-MM-ddTHH:mm:ss 형식으로 저장되고 yyyy-MM-dd HH:mm:ss 형식으로 응답된다")
     void dateTimeFormat() throws Exception {
         String token = signupAndLogin();
 
@@ -241,7 +242,7 @@ class TodoApiTest extends ApiTestSupport {
         Map<String, Object> stored = jdbcTemplate.queryForMap(
                 "SELECT created_at, updated_at FROM todos WHERE id = ?", todoId);
 
-        assertThat(stored.get("created_at")).asString().matches(DATE_TIME_PATTERN);
-        assertThat(stored.get("updated_at")).asString().matches(DATE_TIME_PATTERN);
+        assertThat(stored.get("created_at")).asString().matches(STORED_DATE_TIME_PATTERN);
+        assertThat(stored.get("updated_at")).asString().matches(STORED_DATE_TIME_PATTERN);
     }
 }

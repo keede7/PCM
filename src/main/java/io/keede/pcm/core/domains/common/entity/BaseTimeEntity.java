@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * 저장 형식(`yyyy-MM-dd HH:mm:ss`)과 응답 값이 일치하도록 초 단위로 절삭하여 기록한다.
+ * 저장 형식(초 단위)과 응답 값이 일치하도록 초 단위로 절삭하여 기록한다.
  */
 @MappedSuperclass
 public abstract class BaseTimeEntity {
