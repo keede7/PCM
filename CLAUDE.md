@@ -5,7 +5,11 @@ JWT 인증을 활용하여 TODO API Server를 개발한다.
 
 ## 기술 스택
 
-
+- Java 21, Spring Boot 4.1.1, Gradle
+- Spring Web MVC, Spring Validation
+- Spring Data JPA (Hibernate), SQLite (`hibernate-community-dialects`)
+- Spring Security + OAuth2 Resource Server (Nimbus JOSE JWT, HS256)
+- 테스트: JUnit 5, Mockito, AssertJ, MockMvc, Spring Security Test
 
 ## 아키텍처 규칙
 
@@ -24,4 +28,4 @@ JWT 인증을 활용하여 TODO API Server를 개발한다.
 
 ## 그 외 준수사항
 
-- CRITICAL: 모든 지시사항과 그에 따른 결과를 ./prompt/user_prompts.md 에 작성한다.
+- CRITICAL: 모든 지시사항과 그에 따른 결과를 ./prompt/user_prompts.md 에 작성하며 그 외 파일에는 작성하지 않는다..

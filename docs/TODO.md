@@ -8,22 +8,25 @@
 
 | 구현여부 | **Method** | **Path**        | **설명**                  | **인증** |
 |------|------------|-----------------|-------------------------|--------|
-|      | POST       | `/users/signup` | 회원가입                    | –      | 
-|      | POST       | `/users/login`  | 로그인, `access_token` 반환  | –      |
-|      | GET        | `/users/me`     | 내 정보 조회                 | 필요     |
+|  ✅  | POST       | `/users/signup` | 회원가입                    | –      | 
+|  ✅  | POST       | `/users/login`  | 로그인, `access_token` 반환  | –      |
+|  ✅  | GET        | `/users/me`     | 내 정보 조회                 | 필요     |
 
 **TODO** — 로그인한 사용자 본인의 TODO만 다룹니다
 
 | 구현여부 | **Method** | **Path**      | **설명**  | **인증** |
 |------|------------|---------------|---------|--------|
-|      | POST       | `/todos`      | 생성      | 필요     |
-|      | GET        | `/todos`      | 내 목록 조회 | 필요     |
-|      | GET        | `/todos/{id}` | 단건 조회   | 필요     |
-|      | PUT        | `/todos/{id}` | 수정      | 필요     |
-|      | DELETE     | `/todos/{id}` | 삭제      | 필요     |
+|  ✅  | POST       | `/todos`      | 생성      | 필요     |
+|  ✅  | GET        | `/todos`      | 내 목록 조회 | 필요     |
+|  ✅  | GET        | `/todos/{id}` | 단건 조회   | 필요     |
+|  ✅  | PUT        | `/todos/{id}` | 수정      | 필요     |
+|  ✅  | DELETE     | `/todos/{id}` | 삭제      | 필요     |
 
 
-## **선택 사항 **
+## **선택 사항**
 
-- `GET /todos/search?keyword=` — 제목으로 검색
-- `PUT /users/me`, `DELETE /users/me` — 회원정보 수정 및 탈퇴
+| 구현여부 | **Method** | **Path**                   | **설명**     | **인증** |
+|------|------------|----------------------------|------------|--------|
+|  ✅  | GET        | `/todos/search?keyword=`   | 제목으로 검색    | 필요     |
+|  ✅  | PUT        | `/users/me`                | 회원정보 수정    | 필요     |
+|  ✅  | DELETE     | `/users/me`                | 회원 탈퇴      | 필요     |
