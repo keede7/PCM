@@ -11,7 +11,7 @@ src/main/java/io/keede/pcm
 ├           └── service/                    비즈니스 로직 정의
 ├               └── XXQueryServicejava      읽기전용 기능 정의  
 ├               └── XXCommandService.java   CUD 기능 정의   
-├       └── common/                         도메인 공통 (BaseTimeEntity 등)
+├       └── common/                         도메인 공통 (BaseTimeEntity, 날짜/시간 Converter 등)
 ├   └── config/                             설정 영역   
 ├       └── security/                       Spring Security, JWT 설정 및 토큰 발급
 ├   └── exception/                          예외처리 설정

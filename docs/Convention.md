@@ -19,4 +19,6 @@
         this.jwtProperties = jwtProperties;
     }
 ```
+- 시간이 포함된 데이터는 `yyyy-mm-dd HH:mm:ss` 형태로 저장 및 응답이 이루어질 수 있도록 정의한다. 
+  - 날짜의 경우 그대로 정의한다.(예시. LocalDate -> `yyyy-MM-dd`) 
 ---

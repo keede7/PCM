@@ -29,3 +29,4 @@ JWT 인증을 활용하여 TODO API Server를 개발한다.
 ## 그 외 준수사항
 
 - CRITICAL: 모든 지시사항과 그에 따른 결과를 ./prompt/user_prompts.md 에 작성하며 그 외 파일에는 작성하지 않는다..
+- CRITICAL: README.md에는 선택한 스택, 실행 방법, 테스트 실행 방법, API 목록 요약을 작성한다.

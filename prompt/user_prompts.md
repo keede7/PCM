@@ -56,3 +56,24 @@
   - record는 컴포넌트에 `final`을 붙일 수 없어 줄바꿈 형식만 적용 (`ErrorResponse`, `JwtProperties`, `UserResponse`)
 - `./gradlew test` 전체 41개 통과
 - 변경 사항을 Prefix 형식(`feat:`, `docs:`, `chore:`)으로 나누어 커밋
+
+## 2026-10-14 #4
+
+### 지시사항
+
+> 최종 검토 이후 작업을 마무리하며 필요한 추가 작업이 있으면 작업 후 커밋한다
+
+### 결과
+
+- 신규 규칙 반영
+  - `docs/Convention.md`: 일시는 `yyyy-MM-dd HH:mm:ss`, 날짜는 `yyyy-MM-dd` 형식으로 저장 및 응답
+    - 응답: `JacksonConfig`에서 `LocalDateTime`/`LocalDate` 형식을 전역 지정
+    - 저장: `LocalDateTimeConverter`/`LocalDateConverter`(autoApply)로 문자열 저장 (기존에는 epoch millis 정수로 저장되고 있었음)
+    - `BaseTimeEntity`는 초 단위로 절삭하여 기록 (저장 값과 응답 값 일치)
+  - `CLAUDE.md`: `README.md` 작성 (기술 스택, 실행 방법, 테스트 실행 방법, API 목록, 에러 응답)
+- 검토 중 발견하여 수정
+  - TODO 수정 응답의 `updatedAt`이 갱신 전 값으로 내려가던 문제 → 수정 후 flush 하여 반영
+  - `spring.jpa.open-in-view` 비활성화 (Service Layer에서 DTO 변환하므로 불필요, 기동 경고 제거)
+- 테스트: 일시 응답/저장 형식 검증 테스트 추가, `./gradlew test` 전체 43개 통과
+- 참고: 검증용 서버 실행 중 사용자가 띄워둔 로컬 서버(8080)로 요청이 전달되어 `pcm.db`에 테스트 데이터가 생성되고, 해당 서버 프로세스가 종료됨. 생성된 테스트 데이터(사용자 1건, TODO 1건)는 삭제함
+- 참고: 기존 `pcm.db`의 일시 컬럼은 정수(epoch millis)로 저장되어 있어 신규 형식으로 변환 필요
