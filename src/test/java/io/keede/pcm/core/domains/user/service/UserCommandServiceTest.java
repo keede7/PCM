@@ -10,6 +10,7 @@ import io.keede.pcm.core.web.dto.user.UserResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -53,7 +54,9 @@ class UserCommandServiceTest {
 
         assertThat(response.email()).isEqualTo("keede@pcm.io");
         assertThat(response.name()).isEqualTo("keede");
-        verify(userRepository).saveAndFlush(any(User.class));
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).saveAndFlush(captor.capture());
+        assertThat(captor.getValue().getTokenKey()).isNotBlank();
     }
 
     @Test

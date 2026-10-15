@@ -64,10 +64,10 @@ class UserQueryServiceTest {
     @Test
     @DisplayName("이메일과 비밀번호가 일치하면 Access Token을 발급한다")
     void login() {
-        User user = UserFixture.builder().id(1L).email("keede@pcm.io").password("encoded-password").build();
+        User user = UserFixture.builder().id(1L).email("keede@pcm.io").password("encoded-password").tokenKey("token-key").build();
         given(userRepository.findByEmail("keede@pcm.io")).willReturn(Optional.of(user));
         given(passwordEncoder.matches("password123", "encoded-password")).willReturn(true);
-        given(jwtTokenProvider.issueAccessToken(1L)).willReturn("access-token");
+        given(jwtTokenProvider.issueAccessToken(1L, "token-key")).willReturn("access-token");
 
         LoginResponse response = userQueryService.login("keede@pcm.io", "password123");
 
@@ -96,5 +96,21 @@ class UserQueryServiceTest {
                 .isInstanceOf(BusinessException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.INVALID_CREDENTIALS);
+    }
+
+    @Test
+    @DisplayName("사용자 ID와 토큰 키가 일치하는 사용자가 있으면 유효한 토큰이다")
+    void validTokenOwner() {
+        given(userRepository.existsByIdAndTokenKey(1L, "token-key")).willReturn(true);
+
+        assertThat(userQueryService.isValidTokenOwner(1L, "token-key")).isTrue();
+    }
+
+    @Test
+    @DisplayName("탈퇴 등으로 사용자 ID와 토큰 키가 일치하는 사용자가 없으면 유효하지 않은 토큰이다")
+    void invalidTokenOwner() {
+        given(userRepository.existsByIdAndTokenKey(1L, "old-token-key")).willReturn(false);
+
+        assertThat(userQueryService.isValidTokenOwner(1L, "old-token-key")).isFalse();
     }
 }

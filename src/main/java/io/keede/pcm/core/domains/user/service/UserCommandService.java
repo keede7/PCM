@@ -62,6 +62,9 @@ public class UserCommandService {
         return UserResponse.from(user);
     }
 
+    /**
+     * 사용자의 TODO와 사용자를 삭제한다. 사용자의 토큰 키가 함께 삭제되므로 발급된 모든 토큰이 만료된다.
+     */
     public void withdraw(
             final Long userId
     ) {

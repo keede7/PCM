@@ -140,11 +140,12 @@ class UserApiTest extends ApiTestSupport {
     }
 
     @Test
-    @DisplayName("[선택] 회원 탈퇴 후에는 내 정보 조회(404)와 로그인(401)이 불가하다")
+    @DisplayName("[선택] 회원 탈퇴 시 발급된 모든 토큰이 만료되어 401이 반환되고, 로그인도 불가하다")
     void withdraw() throws Exception {
         String email = uniqueEmail();
         signup(email, "keede");
         String token = login(email);
+        String otherDeviceToken = login(email);
 
         mockMvc.perform(post("/todos")
                         .header(HttpHeaders.AUTHORIZATION, bearer(token))
@@ -160,7 +161,12 @@ class UserApiTest extends ApiTestSupport {
 
         mockMvc.perform(get("/users/me")
                         .header(HttpHeaders.AUTHORIZATION, bearer(token)))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+
+        mockMvc.perform(get("/todos")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(otherDeviceToken)))
+                .andExpect(status().isUnauthorized());
 
         mockMvc.perform(post("/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -196,5 +202,29 @@ class UserApiTest extends ApiTestSupport {
                                 """.formatted(email, PASSWORD)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.createdAt").value(matchesPattern(DATE_TIME_PATTERN)));
+    }
+
+    @Test
+    @DisplayName("[선택] 탈퇴한 이메일로 재가입하면 새로 발급받은 토큰은 정상 사용 가능하다")
+    void signupAgainAfterWithdraw() throws Exception {
+        String email = uniqueEmail();
+        signup(email, "keede");
+        String oldToken = login(email);
+
+        mockMvc.perform(delete("/users/me")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(oldToken)))
+                .andExpect(status().isNoContent());
+
+        signup(email, "keede-again");
+        String newToken = login(email);
+
+        mockMvc.perform(get("/users/me")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("keede-again"));
+
+        mockMvc.perform(get("/users/me")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(oldToken)))
+                .andExpect(status().isUnauthorized());
     }
 }

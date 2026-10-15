@@ -18,6 +18,7 @@ public final class UserFixture {
         private String email = "keede@pcm.io";
         private String password = "encoded-password";
         private String name = "keede";
+        private String tokenKey = "token-key";
 
         public Builder id(
                 final Long id
@@ -47,9 +48,17 @@ public final class UserFixture {
             return this;
         }
 
+        public Builder tokenKey(
+                final String tokenKey
+        ) {
+            this.tokenKey = tokenKey;
+            return this;
+        }
+
         public User build() {
             User user = User.create(email, password, name);
             ReflectionTestUtils.setField(user, "id", id);
+            ReflectionTestUtils.setField(user, "tokenKey", tokenKey);
             return user;
         }
     }

@@ -10,6 +10,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             final String email
     );
 
+    boolean existsByIdAndTokenKey(
+            final Long id,
+            final String tokenKey
+    );
+
     Optional<User> findByEmail(
             final String email
     );

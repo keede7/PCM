@@ -48,7 +48,17 @@ public class UserQueryService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS));
         verifyPassword(rawPassword, user);
-        return new LoginResponse(jwtTokenProvider.issueAccessToken(user.getId()));
+        return new LoginResponse(jwtTokenProvider.issueAccessToken(user.getId(), user.getTokenKey()));
+    }
+
+    /**
+     * 토큰의 사용자 ID와 토큰 키가 현재 사용자와 일치하는지 확인한다.
+     */
+    public boolean isValidTokenOwner(
+            final Long userId,
+            final String tokenKey
+    ) {
+        return userRepository.existsByIdAndTokenKey(userId, tokenKey);
     }
 
     private void verifyPassword(

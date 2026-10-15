@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "users")
 public class User extends BaseTimeEntity {
@@ -25,6 +27,14 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    /**
+     * 토큰 발급 시 함께 담기는 사용자별 고유 키.
+     * 탈퇴로 사용자가 삭제되면 기존 토큰의 키와 일치하는 사용자가 없어 토큰이 만료된다.
+     * (SQLite는 삭제된 ID를 재사용할 수 있으므로 ID만으로는 사용자를 구분할 수 없다.)
+     */
+    @Column(nullable = false, unique = true)
+    private String tokenKey;
+
     protected User() {
     }
 
@@ -36,6 +46,7 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.password = password;
         this.name = name;
+        this.tokenKey = UUID.randomUUID().toString();
     }
 
     public static User create(
@@ -72,5 +83,9 @@ public class User extends BaseTimeEntity {
 
     public String getName() {
         return name;
+    }
+
+    public String getTokenKey() {
+        return tokenKey;
     }
 }

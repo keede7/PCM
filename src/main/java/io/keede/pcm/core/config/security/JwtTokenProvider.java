@@ -12,6 +12,8 @@ import java.time.Instant;
 @Component
 public class JwtTokenProvider {
 
+    public static final String TOKEN_KEY_CLAIM = "token_key";
+
     private final JwtEncoder jwtEncoder;
     private final JwtProperties jwtProperties;
 
@@ -24,14 +26,16 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 사용자 ID를 subject로 담은 Access Token을 발급한다.
+     * 사용자 ID(subject)와 사용자별 토큰 키를 담은 Access Token을 발급한다.
      */
     public String issueAccessToken(
-            final Long userId
+            final Long userId,
+            final String tokenKey
     ) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(String.valueOf(userId))
+                .claim(TOKEN_KEY_CLAIM, tokenKey)
                 .issuedAt(now)
                 .expiresAt(now.plus(jwtProperties.expiration()))
                 .build();
