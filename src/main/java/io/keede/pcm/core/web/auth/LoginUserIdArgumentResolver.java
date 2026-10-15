@@ -14,7 +14,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class LoginUserIdArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(
+            final MethodParameter parameter
+    ) {
         return parameter.hasParameterAnnotation(LoginUserId.class)
                 && Long.class.equals(parameter.getParameterType());
     }

@@ -62,13 +62,17 @@ public class UserCommandService {
         return UserResponse.from(user);
     }
 
-    public void withdraw(Long userId) {
+    public void withdraw(
+            final Long userId
+    ) {
         User user = findUser(userId);
         todoRepository.deleteAllByUserId(userId);
         userRepository.delete(user);
     }
 
-    private User findUser(Long userId) {
+    private User findUser(
+            final Long userId
+    ) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }

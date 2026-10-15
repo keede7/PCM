@@ -40,7 +40,9 @@ public abstract class ApiTestSupport {
                 .andExpect(status().isCreated());
     }
 
-    protected String login(String email) throws Exception {
+    protected String login(
+            final String email
+    ) throws Exception {
         String response = mockMvc.perform(post("/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -59,7 +61,9 @@ public abstract class ApiTestSupport {
         return login(email);
     }
 
-    protected String bearer(String token) {
+    protected String bearer(
+            final String token
+    ) {
         return "Bearer " + token;
     }
 }

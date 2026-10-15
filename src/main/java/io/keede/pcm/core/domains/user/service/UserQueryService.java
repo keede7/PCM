@@ -29,7 +29,9 @@ public class UserQueryService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public UserResponse getById(Long userId) {
+    public UserResponse getById(
+            final Long userId
+    ) {
         return userRepository.findById(userId)
                 .map(UserResponse::from)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -45,9 +47,16 @@ public class UserQueryService {
     ) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS));
+        verifyPassword(rawPassword, user);
+        return new LoginResponse(jwtTokenProvider.issueAccessToken(user.getId()));
+    }
+
+    private void verifyPassword(
+            final String rawPassword,
+            final User user
+    ) {
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
-        return new LoginResponse(jwtTokenProvider.issueAccessToken(user.getId()));
     }
 }

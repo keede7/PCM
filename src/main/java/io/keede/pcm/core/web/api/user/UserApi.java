@@ -36,17 +36,23 @@ public class UserApi {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse signup(@Valid @RequestBody SignupRequest request) {
+    public UserResponse signup(
+            @Valid @RequestBody final SignupRequest request
+    ) {
         return userCommandService.signup(request.email(), request.password(), request.name());
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+    public LoginResponse login(
+            @Valid @RequestBody final LoginRequest request
+    ) {
         return userQueryService.login(request.email(), request.password());
     }
 
     @GetMapping("/me")
-    public UserResponse me(@LoginUserId Long userId) {
+    public UserResponse me(
+            @LoginUserId final Long userId
+    ) {
         return userQueryService.getById(userId);
     }
 
@@ -60,7 +66,9 @@ public class UserApi {
 
     @DeleteMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void withdraw(@LoginUserId Long userId) {
+    public void withdraw(
+            @LoginUserId final Long userId
+    ) {
         userCommandService.withdraw(userId);
     }
 }

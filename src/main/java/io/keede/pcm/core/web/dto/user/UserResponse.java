@@ -11,7 +11,9 @@ public record UserResponse(
         LocalDateTime createdAt
 ) {
 
-    public static UserResponse from(User user) {
+    public static UserResponse from(
+            final User user
+    ) {
         return new UserResponse(user.getId(), user.getEmail(), user.getName(), user.getCreatedAt());
     }
 }

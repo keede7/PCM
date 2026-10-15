@@ -16,7 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            final HttpSecurity http
+    ) throws Exception {
         AuthenticationEntryPoint entryPoint = new JsonAuthenticationEntryPoint();
 
         http

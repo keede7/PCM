@@ -15,11 +15,15 @@ public class TodoQueryService {
 
     private final TodoRepository todoRepository;
 
-    public TodoQueryService(TodoRepository todoRepository) {
+    public TodoQueryService(
+            final TodoRepository todoRepository
+    ) {
         this.todoRepository = todoRepository;
     }
 
-    public List<TodoResponse> getMyTodos(Long userId) {
+    public List<TodoResponse> getMyTodos(
+            final Long userId
+    ) {
         return todoRepository.findAllByUserIdOrderByIdAsc(userId).stream()
                 .map(TodoResponse::from)
                 .toList();

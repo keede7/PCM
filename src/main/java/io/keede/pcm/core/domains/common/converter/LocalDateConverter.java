@@ -13,12 +13,16 @@ import java.time.LocalDate;
 public class LocalDateConverter implements AttributeConverter<LocalDate, String> {
 
     @Override
-    public String convertToDatabaseColumn(LocalDate attribute) {
+    public String convertToDatabaseColumn(
+            final LocalDate attribute
+    ) {
         return attribute == null ? null : attribute.format(DateTimePatterns.DATE_FORMATTER);
     }
 
     @Override
-    public LocalDate convertToEntityAttribute(String dbData) {
+    public LocalDate convertToEntityAttribute(
+            final String dbData
+    ) {
         return dbData == null ? null : LocalDate.parse(dbData, DateTimePatterns.DATE_FORMATTER);
     }
 }

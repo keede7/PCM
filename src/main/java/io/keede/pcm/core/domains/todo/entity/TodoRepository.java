@@ -10,7 +10,9 @@ import java.util.Optional;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
-    List<Todo> findAllByUserIdOrderByIdAsc(Long userId);
+    List<Todo> findAllByUserIdOrderByIdAsc(
+            final Long userId
+    );
 
     List<Todo> findAllByUserIdAndTitleContainingOrderByIdAsc(
             final Long userId,
@@ -27,5 +29,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
      */
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from Todo t where t.user.id = :userId")
-    void deleteAllByUserId(@Param("userId") Long userId);
+    void deleteAllByUserId(
+            @Param("userId") final Long userId
+    );
 }

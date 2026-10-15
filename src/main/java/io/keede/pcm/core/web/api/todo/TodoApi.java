@@ -47,7 +47,9 @@ public class TodoApi {
     }
 
     @GetMapping
-    public List<TodoResponse> getMyTodos(@LoginUserId Long userId) {
+    public List<TodoResponse> getMyTodos(
+            @LoginUserId final Long userId
+    ) {
         return todoQueryService.getMyTodos(userId);
     }
 

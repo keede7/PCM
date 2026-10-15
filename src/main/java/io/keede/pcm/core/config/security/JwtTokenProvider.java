@@ -26,7 +26,9 @@ public class JwtTokenProvider {
     /**
      * 사용자 ID를 subject로 담은 Access Token을 발급한다.
      */
-    public String issueAccessToken(Long userId) {
+    public String issueAccessToken(
+            final Long userId
+    ) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(String.valueOf(userId))

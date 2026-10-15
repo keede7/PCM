@@ -22,27 +22,37 @@ public final class TodoFixture {
         private String content = "우유, 계란";
         private boolean completed = false;
 
-        public Builder id(Long id) {
+        public Builder id(
+                final Long id
+        ) {
             this.id = id;
             return this;
         }
 
-        public Builder user(User user) {
+        public Builder user(
+                final User user
+        ) {
             this.user = user;
             return this;
         }
 
-        public Builder title(String title) {
+        public Builder title(
+                final String title
+        ) {
             this.title = title;
             return this;
         }
 
-        public Builder content(String content) {
+        public Builder content(
+                final String content
+        ) {
             this.content = content;
             return this;
         }
 
-        public Builder completed(boolean completed) {
+        public Builder completed(
+                final boolean completed
+        ) {
             this.completed = completed;
             return this;
         }

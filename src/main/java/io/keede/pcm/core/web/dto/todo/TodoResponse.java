@@ -13,7 +13,9 @@ public record TodoResponse(
         LocalDateTime updatedAt
 ) {
 
-    public static TodoResponse from(Todo todo) {
+    public static TodoResponse from(
+            final Todo todo
+    ) {
         return new TodoResponse(
                 todo.getId(),
                 todo.getTitle(),

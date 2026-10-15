@@ -23,12 +23,16 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
+    public ResponseEntity<ErrorResponse> handleBusinessException(
+            final BusinessException e
+    ) {
         return toResponse(e.getErrorCode());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> handleValidationException(
+            final MethodArgumentNotValidException e
+    ) {
         String message = e.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getField)
                 .distinct()
@@ -57,7 +61,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception e) {
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(
+            final Exception e
+    ) {
         // 415, 406 등 HTTP 상태를 가진 Spring MVC 예외는 상태를 유지한다.
         if (e instanceof org.springframework.web.ErrorResponse springError) {
             HttpStatus status = HttpStatus.valueOf(springError.getStatusCode().value());
@@ -67,11 +73,15 @@ public class GlobalExceptionHandler {
         return toResponse(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<ErrorResponse> toResponse(ErrorCode errorCode) {
+    private ResponseEntity<ErrorResponse> toResponse(
+            final ErrorCode errorCode
+    ) {
         return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
     }
 
-    private ResponseEntity<ErrorResponse> badRequest(String message) {
+    private ResponseEntity<ErrorResponse> badRequest(
+            final String message
+    ) {
         return ResponseEntity.status(ErrorCode.INVALID_INPUT.getStatus())
                 .body(ErrorResponse.of(ErrorCode.INVALID_INPUT, message));
     }
