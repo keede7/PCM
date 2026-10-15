@@ -32,7 +32,7 @@ public class User extends BaseTimeEntity {
      * 탈퇴로 사용자가 삭제되면 기존 토큰의 키와 일치하는 사용자가 없어 토큰이 만료된다.
      * (SQLite는 삭제된 ID를 재사용할 수 있으므로 ID만으로는 사용자를 구분할 수 없다.)
      */
-    @Column(nullable = false, unique = true)
+    @Column(name = "access_token_key", nullable = false)
     private String tokenKey;
 
     protected User() {
