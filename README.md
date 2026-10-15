@@ -43,7 +43,10 @@ JWT_SECRET=your-32-bytes-or-longer-secret-key-value ./gradlew bootRun
 
 ## API 목록
 
-인증이 필요한 API는 `Authorization: Bearer <access_token>` 헤더를 사용합니다. (토큰 만료: 1시간)
+인증이 필요한 API는 `Authorization: Bearer <access_token>` 헤더를 사용합니다.
+
+- 토큰 만료: 발급 후 1시간
+- 회원 탈퇴 시 해당 사용자에게 발급된 모든 토큰이 즉시 만료됩니다. (토큰에 사용자별 토큰 키를 담아 요청마다 검증)
 
 ### 사용자
 
@@ -53,7 +56,7 @@ JWT_SECRET=your-32-bytes-or-longer-secret-key-value ./gradlew bootRun
 | POST | `/users/login` | 로그인, `{ "access_token": "..." }` 반환 | – | 200 |
 | GET | `/users/me` | 내 정보 조회 | 필요 | 200 |
 | PUT | `/users/me` | 회원정보 수정 (이름, 비밀번호는 입력 시에만 변경) | 필요 | 200 |
-| DELETE | `/users/me` | 회원 탈퇴 (본인 TODO 함께 삭제) | 필요 | 204 |
+| DELETE | `/users/me` | 회원 탈퇴 (본인 TODO 함께 삭제, 발급된 모든 토큰 만료) | 필요 | 204 |
 
 ### TODO
 
@@ -111,9 +114,9 @@ curl -X PUT localhost:8080/todos/1 -H "Authorization: Bearer <access_token>" \
 | Status | code | 상황 |
 |--------|------|------|
 | 400 | `INVALID_INPUT` | 요청 값 검증 실패 |
-| 401 | `UNAUTHORIZED` | 토큰 없음, 만료, 위조 |
+| 401 | `UNAUTHORIZED` | 토큰 없음, 만료, 위조, 탈퇴한 사용자의 토큰 |
 | 401 | `INVALID_CREDENTIALS` | 이메일 또는 비밀번호 불일치 |
-| 404 | `USER_NOT_FOUND` | 사용자 없음 (탈퇴한 사용자의 토큰 등) |
+| 404 | `USER_NOT_FOUND` | 사용자 없음 |
 | 404 | `TODO_NOT_FOUND` | 존재하지 않거나 본인 소유가 아닌 TODO |
 | 404 | `RESOURCE_NOT_FOUND` | 존재하지 않는 경로 |
 | 405 | `METHOD_NOT_ALLOWED` | 지원하지 않는 HTTP 메서드 |
